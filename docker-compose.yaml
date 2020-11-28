@@ -1,0 +1,43 @@
+version: '3'
+services:
+
+  config:
+    container_name: config
+    image: funcho/config:1.1
+    restart: always
+    environment:
+      URI: 'https://github.com/andremellosoftfocus/microservices-2.git'
+    ports:
+      - 8888:8888
+    expose:
+      - "8888"
+
+  discovery:
+    container_name: discovery
+    image: funcho/discovery:1.1
+    restart: always
+    depends_on:
+      - config
+    environment:
+      CONFIG_SERVER_URL: 'http://config:8888'
+    ports:
+      - 8761:8761
+    expose:
+      - "8761"
+    links:
+      - config
+
+  produtos:
+    container_name: produtos
+    image: funcho/produtos:1.0
+    restart: always
+    depends_on:
+      - config
+    environment:
+      CONFIG_SERVER_URL: 'http://config:8888'
+    ports:
+      - 8761:8761
+    expose:
+      - "8761"
+    links:
+      - config
